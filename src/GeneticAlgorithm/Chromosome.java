@@ -1,18 +1,21 @@
 package GeneticAlgorithm;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 public class Chromosome {
 
     private int geneNumber;
-    private int[] phenotype;
+    List<Integer> phenotype;
     private double fitnessValue = 0;
     private Graph graph;
 
     public Chromosome(Graph graph) {
         geneNumber = graph.getNodesNumber();
-        phenotype = new int[geneNumber];
+        phenotype = new ArrayList<>();
     }
 
-    public int[] getPhenotype() {
+    public List<Integer> getPhenotype() {
         return phenotype;
     }
 
@@ -21,18 +24,18 @@ public class Chromosome {
     }
 
     public void calculateFitness() {
-        double fitness = 0;
-        for (int i = 0; i < geneNumber - 1; i++) {
-            fitness += graph.getDistance(phenotype[i], phenotype[i + 1]);
+        fitnessValue = graph.getDistance(phenotype.get(0), phenotype.get(phenotype.size()-1));
+        Iterator<Integer> i1 = phenotype.listIterator();
+        Iterator<Integer> i2 = phenotype.listIterator(1);
+        while(i1.hasNext() && i2.hasNext()){
+            fitnessValue += graph.getDistance(i1.next(), i2.next());
         }
-        if(geneNumber>1) {
-            fitness += graph.getDistance(phenotype[0], phenotype[geneNumber-1]);
-        }
-        fitnessValue = fitness;
     }
 
     public void generateRandomPhenotype(){
-
+       phenotype = java.util.stream.IntStream.rangeClosed(0, geneNumber).boxed().collect(Collectors.toList());
+       Collections.shuffle(phenotype, new Random(System.nanoTime()));
+       System.out.println(phenotype);
     }
 
 
