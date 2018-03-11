@@ -1,12 +1,12 @@
 package GeneticAlgorithm;
 
+import java.io.IOException;
+
 public class Main {
 
-    public static void main(String [] args){
+    public static void main(String[] args) {
 
-        Graph graph = new Graph(10);
-        Chromosome chromosome = new Chromosome(graph);
-        chromosome.generateRandomPhenotype();
-
+       Population population = new Population();
+       population.doThisShit();
     }
 }
