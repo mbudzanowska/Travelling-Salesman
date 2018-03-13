@@ -7,11 +7,13 @@ public class Graph {
 
     private int nodesNumber;
     private double[][] matrix;
-    private static final int MIN_DISTANCE = 1;
-    private static final int MAX_DISTANCE = 10;
     private static final String FILE_NAME = "src/Graphs/graph_";
+    private static int minDistance;
+    private static int maxDistance;
 
-    public Graph(int nodesNumber) {
+    public Graph(int nodesNumber, int minDistance, int maxDistance) {
+        this.minDistance = minDistance;
+        this.maxDistance = maxDistance;
         this.nodesNumber = nodesNumber;
         matrix = new double[nodesNumber][nodesNumber];
         loadMatrix();
@@ -31,7 +33,7 @@ public class Graph {
                 if (i == j) {
                     matrix[i][j] = 0;
                 } else {
-                    double distance = ThreadLocalRandom.current().nextInt(MIN_DISTANCE, MAX_DISTANCE + 1);
+                    double distance = ThreadLocalRandom.current().nextInt(minDistance, maxDistance + 1);
                     matrix[i][j] = matrix[j][i] = distance;
                 }
             }

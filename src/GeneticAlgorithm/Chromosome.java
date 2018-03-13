@@ -17,7 +17,11 @@ public class Chromosome {
     }
 
     public Chromosome(Chromosome chromosome){
-
+        geneNumber = chromosome.geneNumber;
+        graph = chromosome.graph;
+        fitnessValue = chromosome.fitnessValue;
+        phenotype = new ArrayList<>();
+        chromosome.phenotype.forEach(integer -> phenotype.add(integer));
     }
 
     public List<Integer> getPhenotype() {
@@ -39,7 +43,7 @@ public class Chromosome {
 
     public void generateRandomPhenotype() {
         phenotype = java.util.stream.IntStream.rangeClosed(0, geneNumber-1).boxed().collect(Collectors.toList());
-       // Collections.shuffle(phenotype, new Random(System.nanoTime()));
+        Collections.shuffle(phenotype, new Random(System.nanoTime()));
     }
 
     public void swapGenes(int locus1, int locus2){
