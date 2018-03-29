@@ -16,7 +16,7 @@ public class Chromosome {
         phenotype = new ArrayList<>();
     }
 
-    public Chromosome(Chromosome chromosome){
+    public Chromosome(Chromosome chromosome) {
         geneNumber = chromosome.geneNumber;
         graph = chromosome.graph;
         fitnessValue = chromosome.fitnessValue;
@@ -42,28 +42,27 @@ public class Chromosome {
     }
 
     public void generateRandomPhenotype() {
-        phenotype = java.util.stream.IntStream.rangeClosed(0, geneNumber-1).boxed().collect(Collectors.toList());
+        phenotype = java.util.stream.IntStream.rangeClosed(0, geneNumber - 1).boxed().collect(Collectors.toList());
         Collections.shuffle(phenotype, new Random(System.nanoTime()));
     }
 
-    public void swapGenes(int locus1, int locus2){
+    public void swapGenes(int locus1, int locus2) {
         Collections.swap(phenotype, locus1, locus2);
     }
 
-    public void inverseGenes(int beginning, int end){
-        List<Integer> sublist = phenotype.subList(beginning, end+1);
+    public void inverseGenes(int beginning, int end) {
+        List<Integer> sublist = phenotype.subList(beginning, end + 1);
         Collections.reverse(sublist);
-        for(int i = beginning; i<= end; i++){
-            phenotype.set(i, sublist.get(i-beginning));
+        for (int i = beginning; i <= end; i++) {
+            phenotype.set(i, sublist.get(i - beginning));
         }
     }
 
-    public void printPhenotype(){
-        for(int i = 0; i<geneNumber; i++){
+    public void printPhenotype() {
+        for (int i = 0; i < geneNumber; i++) {
             System.out.print(phenotype.get(i) + " ");
         }
         System.out.println();
     }
-
 
 }

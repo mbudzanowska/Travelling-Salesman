@@ -17,10 +17,8 @@ public class OrderCrossover implements Crossover {
 
     @Override
     public Pair<Chromosome, Chromosome> execute(Chromosome fistChromosome, Chromosome secondChromosome) {
-        int firstNumber = getRandomInteger(0, geneNumber - 1);
-        int secondNumber = getRandomInteger(0, geneNumber);
-        int firstLocus = Math.min(firstNumber, secondNumber);
-        int secondLocus = Math.max(firstNumber, secondNumber);
+        int firstLocus = 0;
+        int secondLocus = getRandomInteger(0, geneNumber-1);
         Chromosome firstChild = createChild(fistChromosome, secondChromosome, firstLocus, secondLocus);
         Chromosome secondChild = createChild(secondChromosome, fistChromosome, firstLocus, secondLocus);
         return new Pair<>(firstChild, secondChild);

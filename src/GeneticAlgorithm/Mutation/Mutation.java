@@ -4,5 +4,5 @@ import GeneticAlgorithm.Chromosome;
 
 public interface Mutation {
 
-    void execute(Chromosome chromosome);
+    Chromosome execute(Chromosome chromosome);
 }

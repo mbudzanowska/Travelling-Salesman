@@ -13,10 +13,17 @@ public class InverseMutation implements Mutation {
     }
 
     @Override
-    public void execute(Chromosome chromosome) {
+    public Chromosome execute(Chromosome chromosome) {
+        Chromosome mutated = new Chromosome(chromosome);
         int beginning = getRandomInteger(0, graphSize - 1);
         int end = getRandomInteger(0, graphSize - 1);
-        chromosome.inverseGenes(beginning, end);
+        if(beginning > end){
+            int temp = beginning;
+            beginning = end;
+            end = temp;
+        }
+        mutated.inverseGenes(beginning, end);
+        return mutated;
     }
 
     private int getRandomInteger(int from, int to) {

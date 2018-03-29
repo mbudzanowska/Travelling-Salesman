@@ -9,6 +9,7 @@ import GeneticAlgorithm.Mutation.Mutation;
 import GeneticAlgorithm.Mutation.ScrambleMutation;
 import GeneticAlgorithm.Selection.RouletteSelection;
 import GeneticAlgorithm.Selection.Selection;
+import GeneticAlgorithm.Selection.TournamentSelection;
 import javafx.util.Pair;
 
 import java.io.BufferedWriter;
@@ -33,22 +34,24 @@ public class Population {
     }
 
     private enum selection_type {
-        ROULETTE
+        ROULETTE,
+        TOURNAMENT
     }
 
-    private static final int POPULATION_SIZE = 20;
-    private static final int GRAPH_SIZE = 50;
+    private static final int POPULATION_SIZE = 100;
+    private static final int GRAPH_SIZE = 100;
     private static final int MIN_DISTANCE = 1;
-    private static final int MAX_DISTANCE = 10;
-    private static final double CROSSOVER_PROBABILITY = 0.75;
-    private static final double MUTATION_PROBABILITY = 0.02;
-    private static final int ITERATIONS_NUMBER = 400;
-    private static int SCRAMBLE_MUTATION_SIZE = 5;
-    private static final mutation_type MUTATION = mutation_type.SCRAMBLE;
+    private static final int MAX_DISTANCE = 100;
+    private static final double CROSSOVER_PROBABILITY = 0.8;
+    private static final double MUTATION_PROBABILITY = 0.05;
+    private static final int ITERATIONS_NUMBER = 1000;
+    private static final int SCRAMBLE_MUTATION_SIZE = 5;
+    private static final int TOURNAMENT_SIZE = 10;
+    private static final mutation_type MUTATION = mutation_type.INVERSE;
     private static final crossover_type CROSSOVER = crossover_type.ORDER;
-    private static final selection_type SELECTION = selection_type.ROULETTE;
+    private static final selection_type SELECTION = selection_type.TOURNAMENT;
 
-    private List<Chromosome> population;
+    private static List<Chromosome> population;
     private Graph graph;
     private double[][] data;
     private Chromosome bestChromosome;
@@ -96,6 +99,9 @@ public class Population {
             case ROULETTE:
                 selection = new RouletteSelection(POPULATION_SIZE);
                 break;
+            case TOURNAMENT:
+                selection = new TournamentSelection(POPULATION_SIZE, TOURNAMENT_SIZE);
+                break;
         }
     }
 
@@ -110,13 +116,13 @@ public class Population {
             performChromosomeMutation();
             reevaluateFitness();
             gatherData(i);
-            //System.out.println(bestChromosome.getFitnessValue());
         }
         try {
             saveData();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println(bestChromosome.getFitnessValue());
     }
 
     public void initializeGraph() {
@@ -146,8 +152,16 @@ public class Population {
                 Pair<Chromosome, Chromosome> children = crossover.execute(firstChromosome, secondChromosome);
                 crossoveredPopupation.add(children.getKey());
                 crossoveredPopupation.add(children.getValue());
+//                System.out.print("before: ");
+//                firstChromosome.printPhenotype();
+//                System.out.print("before: ");
+//                secondChromosome.printPhenotype();
+//                System.out.print("after: ");
+//                children.getKey().printPhenotype();
+//                System.out.print("after: ");
+                //children.getValue().printPhenotype();
             } else {
-                crossoveredPopupation.add(firstChromosome);
+                crossoveredPopupation.add(new Chromosome(firstChromosome));
             }
         }
         if (population.size() == 1) {
@@ -157,12 +171,25 @@ public class Population {
     }
 
     public void performChromosomeMutation() {
+        List<Chromosome> mutatedPopulation = new ArrayList<>();
         population.forEach(chromosome -> {
             double probability = new Random().nextDouble();
+            Chromosome mutated;
             if (probability <= MUTATION_PROBABILITY) {
-                mutation.execute(chromosome);
+                mutated = mutation.execute(chromosome);
+              /*  System.out.print("before: ");
+                chromosome.printPhenotype();
+                System.out.print("after: ");
+                mutated.printPhenotype();*/
+            } else {
+                mutated = new Chromosome(chromosome);
             }
+            mutatedPopulation.add(mutated);
+
+
         });
+
+        population = mutatedPopulation;
     }
 
     public void reevaluateFitness() {
@@ -193,7 +220,7 @@ public class Population {
     }
 
     private void saveData() throws IOException {
-        BufferedWriter outputWriter = new BufferedWriter(new FileWriter("somefilename.txt"));
+        BufferedWriter outputWriter = new BufferedWriter(new FileWriter("fitness_values.txt"));
         for (int i = 0; i < ITERATIONS_NUMBER - 1; i++) {
             for (int j = 0; j < 4; j++) {
                 outputWriter.write(Double.toString(data[i][j]) + " ");

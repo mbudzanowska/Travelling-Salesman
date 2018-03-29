@@ -17,7 +17,8 @@ public class ScrambleMutation implements Mutation{
     }
 
     @Override
-    public void execute(Chromosome chromosome) {
+    public Chromosome execute(Chromosome chromosome) {
+        Chromosome mutated = new Chromosome(chromosome);
         List<Integer> locuses = new ArrayList<>();
         while (locuses.size() != scrambleMutationSize) {
             int locus = getRandomInteger(0, graphSize - 1);
@@ -26,8 +27,9 @@ public class ScrambleMutation implements Mutation{
             }
         }
         for (int i = 0; i < scrambleMutationSize; i++) {
-            chromosome.swapGenes(locuses.get(getRandomInteger(0, scrambleMutationSize - 1)), locuses.get(getRandomInteger(0, scrambleMutationSize - 1)));
+            mutated.swapGenes(locuses.get(getRandomInteger(0, scrambleMutationSize - 1)), locuses.get(getRandomInteger(0, scrambleMutationSize - 1)));
         }
+        return mutated;
     }
 
     private int getRandomInteger(int from, int to) {
