@@ -9,7 +9,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class OrderCrossover implements Crossover {
 
-    private int geneNumber;
+    protected int geneNumber;
+    protected int firstLocus;
+    protected int secondLocus;
 
     public OrderCrossover(int geneNumber) {
         this.geneNumber = geneNumber;
@@ -17,8 +19,6 @@ public class OrderCrossover implements Crossover {
 
     @Override
     public Pair<Chromosome, Chromosome> execute(Chromosome fistChromosome, Chromosome secondChromosome) {
-        int firstLocus = 0;
-        int secondLocus = getRandomInteger(0, geneNumber-1);
         Chromosome firstChild = createChild(fistChromosome, secondChromosome, firstLocus, secondLocus);
         Chromosome secondChild = createChild(secondChromosome, fistChromosome, firstLocus, secondLocus);
         return new Pair<>(firstChild, secondChild);
@@ -43,6 +43,19 @@ public class OrderCrossover implements Crossover {
             secondChromosomeGeneIndex = secondChromosomeGeneIndex == geneNumber - 1 ? 0 : secondChromosomeGeneIndex + 1;
         }
         return child;
+    }
+
+    protected void generateLocuses(){
+        firstLocus = getRandomInteger(0, geneNumber-1);
+        secondLocus = -1;
+        while(secondLocus < 0 || secondLocus == firstLocus) {
+            secondLocus = getRandomInteger(0, geneNumber-1);
+        }
+        if(secondLocus < firstLocus) {
+            int helper = firstLocus;
+            firstLocus = secondLocus;
+            secondLocus = helper;
+        }
     }
 
     private int getRandomInteger(int from, int to) {

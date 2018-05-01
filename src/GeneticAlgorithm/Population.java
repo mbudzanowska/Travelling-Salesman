@@ -7,6 +7,7 @@ import GeneticAlgorithm.Crossover.PartiallyMatchedCrossover;
 import GeneticAlgorithm.Mutation.InverseMutation;
 import GeneticAlgorithm.Mutation.Mutation;
 import GeneticAlgorithm.Mutation.ScrambleMutation;
+import GeneticAlgorithm.Selection.ElitistSelection;
 import GeneticAlgorithm.Selection.RouletteSelection;
 import GeneticAlgorithm.Selection.Selection;
 import GeneticAlgorithm.Selection.TournamentSelection;
@@ -35,21 +36,23 @@ public class Population {
 
     private enum selection_type {
         ROULETTE,
-        TOURNAMENT
+        TOURNAMENT,
+        ELITIST
     }
 
     private static final int POPULATION_SIZE = 100;
     private static final int GRAPH_SIZE = 100;
     private static final int MIN_DISTANCE = 1;
     private static final int MAX_DISTANCE = 100;
-    private static final double CROSSOVER_PROBABILITY = 0.8;
+    private static final double CROSSOVER_PROBABILITY = 0.75;
     private static final double MUTATION_PROBABILITY = 0.05;
     private static final int ITERATIONS_NUMBER = 1000;
-    private static final int SCRAMBLE_MUTATION_SIZE = 5;
-    private static final int TOURNAMENT_SIZE = 10;
-    private static final mutation_type MUTATION = mutation_type.INVERSE;
+    private static final int SCRAMBLE_MUTATION_SIZE = 15;
+    private static final int TOURNAMENT_SIZE = 5;
+    private static final int ELITISM_SIZE = 15;
+    private static final mutation_type MUTATION = mutation_type.SCRAMBLE;
     private static final crossover_type CROSSOVER = crossover_type.ORDER;
-    private static final selection_type SELECTION = selection_type.TOURNAMENT;
+    private static final selection_type SELECTION = selection_type.ELITIST;
 
     private static List<Chromosome> population;
     private Graph graph;
@@ -71,13 +74,13 @@ public class Population {
     private void setCrossover() {
         switch (CROSSOVER) {
             case PARTIALLY_MATCHED:
-                crossover = new PartiallyMatchedCrossover();
+                crossover = new PartiallyMatchedCrossover(GRAPH_SIZE);
                 break;
             case ORDER:
                 crossover = new OrderCrossover(GRAPH_SIZE);
                 break;
             case EDGE:
-                crossover = new EdgeCrossover();
+                crossover = new EdgeCrossover(GRAPH_SIZE);
                 break;
         }
     }
@@ -101,6 +104,9 @@ public class Population {
                 break;
             case TOURNAMENT:
                 selection = new TournamentSelection(POPULATION_SIZE, TOURNAMENT_SIZE);
+                break;
+            case ELITIST:
+                selection = new ElitistSelection(POPULATION_SIZE, TOURNAMENT_SIZE, ELITISM_SIZE);
                 break;
         }
     }
